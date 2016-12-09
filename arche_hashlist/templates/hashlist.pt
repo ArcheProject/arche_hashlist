@@ -7,9 +7,7 @@
       i18n:domain="voteit.motion">
 <body>
 <tal:main metal:fill-slot="main-content">
-    <div class="page-header">
-        <h1>${context.title}</h1>
-    </div>
+    <h1>${context.title}</h1>
 
     <p class="lead" tal:condition="context.description">${context.description}</p>
 
@@ -26,8 +24,11 @@
         </li>
     </ul>
 
-    <p tal:condition="len(context.plaintext_rows)"
-       i18n:translate="">Processing hashes takes almost 1 second per row, so use console script.</p>
+    <tal:process tal:condition="len(context.plaintext_rows)">
+        <p i18n:translate="">Processing hashes takes almost 1 second per row, so use console script.</p>
+
+    </tal:process>
+
 </tal:main>
 </body>
 </html>
