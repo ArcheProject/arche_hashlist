@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="view.macro('arche:templates/base_view.pt')"
+      i18n:domain="voteit.motion">
+<body>
+<tal:main metal:fill-slot="main-content">
+    <div class="page-header">
+        <h1>${context.title}</h1>
+    </div>
+
+    <p class="lead" tal:condition="context.description">${context.description}</p>
+
+    <hr/>
+
+    <h3 i18n:translate="">Status</h3>
+    <ul>
+        <li>
+            <tal:ts i18n:translate="">Hashed:</tal:ts>
+            ${len(context.hashset)}
+        </li>
+        <li>
+            <tal:ts i18n:translate="">Unprocessed rows:</tal:ts> ${len(context.plaintext_rows)}
+        </li>
+    </ul>
+
+    <p tal:condition="len(context.plaintext_rows)"
+       i18n:translate="">Processing hashes takes almost 1 second per row, so use console script.</p>
+</tal:main>
+</body>
+</html>
