@@ -5,11 +5,13 @@ from arche.api import Content
 from arche.api import ContextACLMixin
 from arche.api import LocalRolesMixin
 import bcrypt
-from arche.security import PERM_EDIT, PERM_DELETE
+from zope.interface import implementer
+from arche.security import PERM_EDIT
+from arche.security import PERM_DELETE
+from arche.security import PERM_MANAGE_USERS
 from arche.security import PERM_VIEW
 from arche.security import PERM_MANAGE_SYSTEM
 from arche.security import ROLE_ADMIN
-from zope.interface import implementer
 
 from arche_hashlist import _
 from arche_hashlist.interfaces import IHashList
@@ -60,4 +62,4 @@ class HashList(Content, ContextACLMixin, LocalRolesMixin):
 def includeme(config):
     config.add_content_factory(HashList, addable_to=('Root', 'Folder'))
     hashlist_acl = config.registry.acl.new_acl('HashList')
-    hashlist_acl.add(ROLE_ADMIN, [PERM_VIEW, PERM_EDIT, PERM_MANAGE_SYSTEM, PERM_DELETE])
+    hashlist_acl.add(ROLE_ADMIN, [PERM_VIEW, PERM_EDIT, PERM_MANAGE_SYSTEM, PERM_MANAGE_USERS, PERM_DELETE])
