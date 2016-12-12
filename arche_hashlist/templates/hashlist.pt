@@ -25,7 +25,7 @@
     </ul>
 
     <tal:process tal:condition="len(context.plaintext_rows)">
-        <p i18n:translate="">Processing hashes takes almost 1 second per row, so if i need
+        <p i18n:translate="">Processing hashes takes almost 1 second per row, so if you need
             to hash a lot of rows, use the console script.</p>
         <p>
             <a href="${request.resource_url(context, 'work_on_hashing.json')}"
