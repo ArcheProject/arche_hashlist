@@ -1,17 +1,17 @@
 from base64 import b64encode
 
+import bcrypt
 from BTrees.OOBTree import OOSet
 from arche.api import Content
 from arche.api import ContextACLMixin
 from arche.api import LocalRolesMixin
-import bcrypt
-from zope.interface import implementer
-from arche.security import PERM_EDIT
 from arche.security import PERM_DELETE
+from arche.security import PERM_EDIT
+from arche.security import PERM_MANAGE_SYSTEM
 from arche.security import PERM_MANAGE_USERS
 from arche.security import PERM_VIEW
-from arche.security import PERM_MANAGE_SYSTEM
 from arche.security import ROLE_ADMIN
+from zope.interface import implementer
 
 from arche_hashlist import _
 from arche_hashlist.interfaces import IHashList
@@ -45,7 +45,7 @@ class HashList(Content, ContextACLMixin, LocalRolesMixin):
             hashed = bcrypt.hashpw(row, self.salt)
             if hashed not in self.hashset:
                 self.hashset.add(hashed)
-                self.plaintext_rows.remove(row)
+            self.plaintext_rows.remove(row)
         return len(self.plaintext_rows)
 
     @property
