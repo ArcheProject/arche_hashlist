@@ -25,9 +25,43 @@
     </ul>
 
     <tal:process tal:condition="len(context.plaintext_rows)">
-        <p i18n:translate="">Processing hashes takes almost 1 second per row, so use console script.</p>
+        <p i18n:translate="">Processing hashes takes almost 1 second per row, so if i need
+            to hash a lot of rows, use the console script.</p>
+        <p>
+            <a href="${request.resource_url(context, 'work_on_hashing.json')}"
+               class="btn btn-primary"
+               data-hashwork>
+                Hash added data
+                <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
+            </a>
+        </p>
+        <script>
+            $("[data-hashwork]").on('click', function(event) {
+                event.preventDefault();
+                send_hashing_request_from(event.currentTarget);
+            });
 
+            function send_hashing_request_from(selector) {
+                var elem = $(selector);
+                elem.addClass('disabled')
+                arche.actionmarker_feedback(elem, true);
+                var request = arche.do_request(elem.attr('href'));
+                request.always(function() {
+                    arche.actionmarker_feedback(elem, false);
+                    elem.removeClass('disabled')
+                });
+                request.done(function(response) {
+                    console.log(response);
+                    arche.create_flash_message(response['msg']);
+                    if (response['remaining'] > 0) {
+                        send_hashing_request_from(elem);
+                    };
+                });
+            }
+        </script>
     </tal:process>
+
+
 
 </tal:main>
 </body>
