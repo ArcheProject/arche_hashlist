@@ -50,6 +50,15 @@ class HashList(Content, ContextACLMixin, LocalRolesMixin):
             self.plaintext_rows.remove(row)
         return len(self.plaintext_rows)
 
+    def hash_and_remove_plaintext(self, limit=100):
+        rows = list(self.plaintext_rows)[:limit]
+        for row in rows:
+            hashed = bcrypt.hashpw(row, self.salt)
+            if hashed in self.hashset:
+                self.hashset.remove(hashed)
+            self.plaintext_rows.remove(row)
+        return len(self.plaintext_rows)
+
     @property
     def plaintext(self):
         return ''

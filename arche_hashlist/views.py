@@ -1,18 +1,25 @@
 from arche.security import PERM_MANAGE_SYSTEM
 from arche.views.base import BaseView
+from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 
 from arche_hashlist.interfaces import IHashList
 from arche_hashlist import _
 
 
-@view_config(context=IHashList,
-             permission=PERM_MANAGE_SYSTEM,
-             renderer='arche_hashlist:templates/hashlist.pt')
+@view_defaults(context=IHashList, permission=PERM_MANAGE_SYSTEM)
 class HashListView(BaseView):
 
-    def __call__(self):
+    @view_config(renderer='arche_hashlist:templates/hashlist.pt')
+    def main_view(self):
         return {}
+
+    @view_config(name='delete_plaintext')
+    def delete_unprocessed(self):
+        self.context.plaintext_rows.clear()
+        self.flash_messages.add(_("Cleared unprocessed plaintext rows"))
+        return HTTPFound(location=self.request.resource_url(self.context))
 
 
 @view_config(context=IHashList,
@@ -22,7 +29,10 @@ class HashListView(BaseView):
 class HashListWork(BaseView):
 
     def __call__(self):
-        remaining = self.context.hash_plaintext(limit=100)
+        if self.request.GET.get('remove', False):
+            remaining = self.context.hash_and_remove_plaintext(limit=100)
+        else:
+            remaining = self.context.hash_plaintext(limit=100)
         if remaining:
             msg = self.request.localizer.translate(
                 _("${num} remaining...", mapping={'num': remaining})

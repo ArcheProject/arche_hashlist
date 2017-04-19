@@ -3,10 +3,11 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      metal:use-macro="view.macro('arche:templates/base_view.pt')"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
       i18n:domain="voteit.motion">
 <body>
 <tal:main metal:fill-slot="main-content">
+    <div tal:omit-tag="request.is_xhr" data-page-wrapper>
     <h1>${context.title}</h1>
 
     <p class="lead" tal:condition="context.description">${context.description}</p>
@@ -31,9 +32,20 @@
             <a href="${request.resource_url(context, 'work_on_hashing.json')}"
                class="btn btn-primary"
                data-hashwork>
-                Hash added data
+                <span i18n:translate="">Hash added data</span>
                 <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
             </a>
+            <a href="${request.resource_url(context, 'work_on_hashing.json', query={'remove': 1})}"
+               class="btn btn-danger"
+               data-hashwork>
+                <span i18n:translate="">Hash and remove data</span>
+                <span data-actionmarker="glyphicon glyphicon-refresh rotate-me"></span>
+            </a>
+            <a href="${request.resource_url(context, 'delete_plaintext')}"
+               class="btn btn-danger" i18n:translate="">
+                Delete unprocessed data
+            </a>
+
         </p>
         <script>
             $("[data-hashwork]").on('click', function(event) {
@@ -55,12 +67,22 @@
                     arche.create_flash_message(response['msg']);
                     if (response['remaining'] > 0) {
                         send_hashing_request_from(elem);
-                    };
+                    } else {
+                        //All done
+                        reload_page();
+                    }
+                });
+            }
+
+            function reload_page() {
+                var request = arche.do_request('${request.resource_url(context)}');
+                request.done(function(response) {
+                    $("[data-page-wrapper]").html(response);
                 });
             }
         </script>
     </tal:process>
-
+    </div>
 
 
 </tal:main>
