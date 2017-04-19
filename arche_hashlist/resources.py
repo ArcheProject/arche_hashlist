@@ -36,9 +36,9 @@ class HashList(Content, ContextACLMixin, LocalRolesMixin):
         super(HashList, self).__init__(**kw)
 
     def check(self, value):
+        value = b64encode(value.encode('utf-8'))
         if value in self.plaintext_rows:
             return True
-        value = b64encode(value.encode('utf-8'))
         return bcrypt.hashpw(value, self.salt) in self.hashset
 
     def hash_plaintext(self, limit=100):
